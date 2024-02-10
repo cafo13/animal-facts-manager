@@ -7,11 +7,13 @@ on:
       - src/**
       - angular.json
       - Dockerfile
+      - Makefile
       - package.json
       - package-lock.json
       - tsconfig.app.json
       - tsconfig.json
       - tsconfig.spec.json
+      - version.txt
 
 jobs:
   semver:
