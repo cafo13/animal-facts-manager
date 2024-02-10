@@ -1,0 +1,100 @@
+name: animal_facts_manager
+
+on:
+  push:
+    branches: ["main"]
+    paths:
+      - src/**
+      - angular.json
+      - Dockerfile
+      - package.json
+      - package-lock.json
+      - tsconfig.app.json
+      - tsconfig.json
+      - tsconfig.spec.json
+
+jobs:
+  semver:
+    name: Set semantic version from repo
+    runs-on: ubuntu-latest
+    outputs:
+      version: ${{ steps.semver.outputs.VERSION }}
+    steps:
+      - name: Check out Code
+        uses: actions/checkout@v4
+      - id: semver
+        name: set version output
+        run: echo "VERSION=$(cat version.txt)" >> "$GITHUB_OUTPUT"
+
+  tests:
+    name: Tests
+    runs-on: ubuntu-latest
+    container:
+      image: node:20
+    steps:
+      - name: Check out Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: install dependencies
+        run: npm ci
+      - name: run tests
+        run: make test
+
+  build-manager:
+    name: Build manager
+    needs: [
+      semver,
+      tests
+    ]
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      packages: write
+      id-token: write
+    steps:
+      - name: Check out Code
+        uses: actions/checkout@v4
+      - name: Login to GitHub Container Registry
+        uses: docker/login-action@v3
+        with:
+          registry: ghcr.io
+          username: ${{github.actor}}
+          password: ${{secrets.GITHUB_TOKEN}}
+      - name: Tag Docker image and push to GitHub Artifact Registry
+        uses: docker/build-push-action@v5
+        with:
+          file: Dockerfile
+          push: true
+          tags: |
+            ghcr.io/cafo13/animal-facts-manager/web-app:${{ needs.semver.outputs.VERSION }}
+            ghcr.io/cafo13/animal-facts-manager/web-app:latest
+
+  tag_and_release:
+    name: Tag repo and create release
+    needs: [
+      semver,
+      build-manager
+    ]
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out Code
+        uses: actions/checkout@v4
+        with:
+          fetch-depth: 0
+      - name: Create Tag
+        id: create_tag
+        uses: rickstaa/action-create-tag@v1
+        with:
+          tag: ${{ needs.semver.outputs.VERSION }}
+          force_push_tag: true
+      - name: Create Release
+        id: create_release
+        uses: ncipollo/release-action@v1
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          tag: ${{ needs.semver.outputs.VERSION }}
+          body: ${{ github.event.head_commit.message }}
+          allowUpdates: true
+          omitBodyDuringUpdate: true
+          omitNameDuringUpdate: true
