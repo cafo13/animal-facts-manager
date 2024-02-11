@@ -1,0 +1,13 @@
+<ul ngbNav #nav="ngbNav" class="nav-tabs">
+  <li ngbNavItem>
+    <a ngbNavLink>Facts</a>
+    <ng-template ngbNavContent>
+      <p>These navs will always stay in DOM and have no roles</p>
+    </ng-template>
+  </li>
+  <li ngbNavItem>
+    <app-auth-button />
+  </li>
+</ul>
+
+<div [ngbNavOutlet]="nav" class="mt-2"></div>
