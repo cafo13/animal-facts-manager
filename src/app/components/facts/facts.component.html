@@ -1,1 +1,137 @@
-<p>facts works!</p>
+<div *ngIf="!(this.auth.isAuthenticated$ | async)">
+  <p>Please log in.</p>
+  <app-auth-button></app-auth-button>
+</div>
+
+<div *ngIf="this.auth.isAuthenticated$ | async">
+  <app-auth-button></app-auth-button>
+  <form>
+    <div class="mb-3 row">
+      <label
+        for="table-complete-search"
+        class="col-xs-3 col-sm-auto col-form-label"
+        >Full text search:</label
+      >
+      <div class="col-xs-3 col-sm-auto">
+        <input
+          id="table-complete-search"
+          type="text"
+          class="form-control"
+          name="searchTerm"
+          [(ngModel)]="factService.searchTerm"
+        />
+      </div>
+      @if (factService.loading$ | async) {
+      <span class="col col-form-label">Loading...</span>
+      }
+    </div>
+
+    <table class="table table-striped">
+      <thead>
+        <tr>
+          <th scope="col" sortable="id" (sort)="onSort($event)">ID</th>
+          <th scope="col" sortable="fact" (sort)="onSort($event)">Fact</th>
+          <th scope="col" sortable="source" (sort)="onSort($event)">Source</th>
+          <th scope="col" sortable="approved" (sort)="onSort($event)">
+            Approved
+          </th>
+          <th scope="col" sortable="createdAt" (sort)="onSort($event)">
+            Created At
+          </th>
+          <th scope="col" sortable="createdBy" (sort)="onSort($event)">
+            Created By
+          </th>
+          <th scope="col" sortable="updatedAt" (sort)="onSort($event)">
+            Updated At
+          </th>
+          <th scope="col" sortable="updatedBy" (sort)="onSort($event)">
+            Updated By
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (fact of facts$ | async; track fact.id) {
+        <tr>
+          <th scope="row">{{ fact.id }}</th>
+          <td>
+            <ngb-highlight [result]="fact.id" [term]="factService.searchTerm" />
+          </td>
+          <th scope="row">{{ fact.fact }}</th>
+          <td>
+            <ngb-highlight
+              [result]="fact.fact"
+              [term]="factService.searchTerm"
+            />
+          </td>
+          <th scope="row">{{ fact.source }}</th>
+          <td>
+            <ngb-highlight
+              [result]="fact.source"
+              [term]="factService.searchTerm"
+            />
+          </td>
+          <th scope="row">{{ fact.approved }}</th>
+          <td>
+            <ngb-highlight
+              [result]="fact.approved | approved"
+              [term]="factService.searchTerm"
+            />
+          </td>
+          <th scope="row">{{ fact.createdAt }}</th>
+          <td>
+            <ngb-highlight
+              [result]="fact.createdAt.toISOString()"
+              [term]="factService.searchTerm"
+            />
+          </td>
+          <th scope="row">{{ fact.createdBy }}</th>
+          <td>
+            <ngb-highlight
+              [result]="fact.createdBy"
+              [term]="factService.searchTerm"
+            />
+          </td>
+          <th scope="row">{{ fact.updatedAt }}</th>
+          <td>
+            <ngb-highlight
+              [result]="fact.updatedAt.toISOString()"
+              [term]="factService.searchTerm"
+            />
+          </td>
+          <th scope="row">{{ fact.updatedBy }}</th>
+          <td>
+            <ngb-highlight
+              [result]="fact.updatedBy"
+              [term]="factService.searchTerm"
+            />
+          </td>
+        </tr>
+        } @empty {
+        <tr>
+          <td colspan="4" style="text-align: center">No facts found</td>
+        </tr>
+        }
+      </tbody>
+    </table>
+
+    <div class="d-flex justify-content-between p-2">
+      <ngb-pagination
+        [collectionSize]="(total$ | async)!"
+        [(page)]="factService.page"
+        [pageSize]="factService.pageSize"
+      >
+      </ngb-pagination>
+
+      <select
+        class="form-select"
+        style="width: auto"
+        name="pageSize"
+        [(ngModel)]="factService.pageSize"
+      >
+        <option [ngValue]="10">10 items per page</option>
+        <option [ngValue]="25">25 items per page</option>
+        <option [ngValue]="50">50 items per page</option>
+      </select>
+    </div>
+  </form>
+</div>

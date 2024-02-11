@@ -3,10 +3,11 @@
   "version": "0.0.1",
   "scripts": {
     "ng": "ng",
-    "start": "ng serve",
+    "start": "ng serve --configuration development",
     "build": "ng build",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test-ci": "ng test --sourceMap=false --browsers=ChromeHeadless --watch=false"
   },
   "private": true,
   "dependencies": {
