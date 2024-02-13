@@ -18,6 +18,9 @@ export const appConfig: ApplicationConfig = {
         clientId: environment.auth0ClientId,
         authorizationParams: {
           redirect_uri: window.location.origin,
+          audience: environment.auth0Audience,
+          scope:
+            'openid profile email get:fact approve:fact create:fact delete:fact get:fact unapprove:fact update:fact',
         },
       })
     ),

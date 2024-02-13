@@ -24,9 +24,9 @@ export interface Fact {
   fact: string;
   source: string;
   approved: boolean;
-  createdAt: Date;
+  createdAt: string;
   createdBy: string;
-  updatedAt: Date;
+  updatedAt: string;
   updatedBy: string;
 }
 
@@ -94,7 +94,6 @@ export class FactService {
           .pipe(
             tap(() => this._loading$.next(true)),
             debounceTime(200),
-            // tap(() => this.auth.getAccessTokenSilently()),
             switchMap(() => this._search(allFacts)),
             delay(200),
             tap(() => this._loading$.next(false))
@@ -171,9 +170,9 @@ export class FactService {
   private handleError(error: HttpErrorResponse) {
     if (error.status === 0) {
       console.error('An error occurred:', error.error);
-    } /* else if (error.status === 401) {
-      this.auth.RenewSession();
-    } */ else {
+    } else if (error.status === 401) {
+      // TODO: show unatuhorized alert to user
+    } else {
       console.error(
         `Api returned code ${error.status}, body was: `,
         error.error
