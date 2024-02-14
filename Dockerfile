@@ -8,6 +8,6 @@ RUN npm run build:prod
 
 FROM nginx:latest
 
-COPY --from=build /animal-facts-manager/dist/animal-facts-manager/ /usr/share/nginx/html
+COPY --from=build-stage /animal-facts-manager/dist/animal-facts-manager/ /usr/share/nginx/html
 
 EXPOSE 80
