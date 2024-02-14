@@ -1,8 +1,7 @@
-import { Injectable, PipeTransform } from '@angular/core';
+import { Injectable } from '@angular/core';
 
 import { BehaviorSubject, Observable, of, Subject, throwError } from 'rxjs';
 
-import { DecimalPipe } from '@angular/common';
 import {
   catchError,
   debounceTime,
@@ -50,14 +49,14 @@ function sort(facts: Fact[], column: SortColumn, direction: string): Fact[] {
   if (direction === '' || column === '') {
     return facts;
   } else {
-    return [...facts].sort((a: any, b: any) => {
-      const res = compare(a[column], b[column]);
+    return [...facts].sort((a: Fact, b: Fact) => {
+      const res = compare(a[column].toString(), b[column].toString());
       return direction === 'asc' ? res : -res;
     });
   }
 }
 
-function matches(fact: Fact, term: string, pipe: PipeTransform) {
+function matches(fact: Fact, term: string) {
   return (
     fact.fact.toLowerCase().includes(term.toLowerCase()) ||
     fact.source.toLowerCase().includes(term.toLowerCase()) ||
@@ -83,11 +82,7 @@ export class FactService {
     sortDirection: '',
   };
 
-  constructor(
-    private pipe: DecimalPipe,
-    private http: HttpClient,
-    public auth: AuthService
-  ) {
+  constructor(private http: HttpClient, public auth: AuthService) {
     this.auth.getAccessTokenSilently().subscribe((accessToken: string) => {
       this.getAllFacts(accessToken).subscribe((allFacts: Fact[]) => {
         this._search$
@@ -156,7 +151,7 @@ export class FactService {
     let facts = sort(unsortedFacts, sortColumn, sortDirection);
 
     // 2. filter
-    facts = facts.filter((fact) => matches(fact, searchTerm, this.pipe));
+    facts = facts.filter((fact) => matches(fact, searchTerm));
     const total = facts.length;
 
     // 3. paginate

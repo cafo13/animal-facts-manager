@@ -44,7 +44,7 @@ export class FactsComponent {
 
   onSort({ column, direction }: SortEvent) {
     // resetting other headers
-    this.headers?.forEach((header: any) => {
+    this.headers?.forEach((header: NgbdSortableHeader) => {
       if (header.sortable !== column) {
         header.direction = '';
       }

@@ -1,4 +1,4 @@
-<div *ngIf="!(this.auth.isAuthenticated$ | async)">
+<div *ngIf="(this.auth.isAuthenticated$ | async) === false">
   <p>Please log in.</p>
   <app-auth-button></app-auth-button>
 </div>
@@ -18,7 +18,7 @@
           type="text"
           class="form-control"
           name="searchTerm"
-          [(ngModel)]="factService.searchTerm"
+          [ngModel]="factService.searchTerm"
         />
       </div>
       @if (factService.loading$ | async) {
@@ -109,7 +109,7 @@
     <div class="d-flex justify-content-between p-2">
       <ngb-pagination
         [collectionSize]="(total$ | async)!"
-        [(page)]="factService.page"
+        [page]="factService.page"
         [pageSize]="factService.pageSize"
       >
       </ngb-pagination>
@@ -118,7 +118,7 @@
         class="form-select"
         style="width: auto"
         name="pageSize"
-        [(ngModel)]="factService.pageSize"
+        [ngModel]="factService.pageSize"
       >
         <option [ngValue]="10">10 items per page</option>
         <option [ngValue]="25">25 items per page</option>

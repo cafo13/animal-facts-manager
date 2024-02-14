@@ -15,14 +15,17 @@ export interface SortEvent {
 }
 
 @Directive({
+  // eslint-disable-next-line @angular-eslint/directive-selector
   selector: 'th[sortable]',
   standalone: true,
+  // eslint-disable-next-line  @angular-eslint/no-host-metadata-property
   host: {
     '[class.asc]': 'direction === "asc"',
     '[class.desc]': 'direction === "desc"',
     '(click)': 'rotate()',
   },
 })
+// eslint-disable-next-line @angular-eslint/directive-class-suffix
 export class NgbdSortableHeader {
   @Input() sortable: SortColumn = '';
   @Input() direction: SortDirection = '';
