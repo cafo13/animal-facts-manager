@@ -105,6 +105,8 @@ jobs:
       build-manager
     ]
     runs-on: ubuntu-latest
+    permissions:
+      contents: write
     steps:
       - name: Check out Code
         uses: actions/checkout@v4

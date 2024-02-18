@@ -1,13 +1,15 @@
-import { TestBed } from '@angular/core/testing';
-import { AppComponent } from './app.component';
-import { HeaderComponent } from './components/header/header.component';
+import { ComponentFixture, TestBed } from '@angular/core/testing';
+
+import { HeaderComponent } from './header.component';
 import { AuthModule } from '@auth0/auth0-angular';
 
-describe('AppComponent', () => {
+describe('HeaderComponent', () => {
+  let component: HeaderComponent;
+  let fixture: ComponentFixture<HeaderComponent>;
+
   beforeEach(async () => {
     await TestBed.configureTestingModule({
       imports: [
-        AppComponent,
         HeaderComponent,
         AuthModule.forRoot({
           domain: 'some-domain',
@@ -21,11 +23,13 @@ describe('AppComponent', () => {
         }),
       ],
     }).compileComponents();
+
+    fixture = TestBed.createComponent(HeaderComponent);
+    component = fixture.componentInstance;
+    fixture.detectChanges();
   });
 
-  it('should create the app', () => {
-    const fixture = TestBed.createComponent(AppComponent);
-    const app = fixture.componentInstance;
-    expect(app).toBeTruthy();
+  it('should create', () => {
+    expect(component).toBeTruthy();
   });
 });
